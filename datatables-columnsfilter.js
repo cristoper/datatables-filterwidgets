@@ -37,21 +37,47 @@
             // create a control column for every table column
             var i = this.index();
             var isVisible = this.visible();
-            var type = settings.aoColumns[i].sType;
+            var colType = settings.aoColumns[i].sType;
             var data = this.data();
-            var controlCell = $('<td>'+i+': '+type+'</td>'); // jQuery
+            var controlCell = $('<td></td>'); // jQuery
             if (!isVisible) {
                 controlCell.hide();
             }
 
-            // Logic to add widget
-            var rangeSlider = new widgetConstructors.range(dTable, data);
-            controlCell.html(rangeSlider.html);
 
+            /*
+             * {
+             *   0: 'Range',
+             *   3: 'Text',
+             *   implicit: 'None'
+             * }
+             */
+
+            // Get widget type based on config options
+            var type = opts.i || opts.implicit || 'none';
+            type = type.toLowerCase();
+            if (type == "auto") {
+                // See: https://datatables.net/reference/option/columns.type
+                switch (coltype) {
+                    case "date":
+                        type = "date";
+                    break;
+                    case "num":
+                        type = "range";
+                    break;
+                    default:
+                        type = "text";
+                }
+            }
+
+            // Add the widgets
+            var widget = new widgetConstructors[type](dTable, data);
+            controlCell.html(widget.html);
             controlRow.append(controlCell);
-            scolumnFilters.widgetArray.push(rangeSlider);
+            scolumnFilters.widgetArray.push(widget);
         });
 
+        // Add the control row to the table
         header.append(controlRow);
 
         // Keep control header row in sync with sorting header row column visibility
