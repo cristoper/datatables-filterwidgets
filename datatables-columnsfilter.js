@@ -86,7 +86,8 @@
      * TODO: need to add a DataTables API call to extend this with more widget types.
      * */
     var widgetConstructors = {
-        range: Range
+        range: Range,
+        none: None
     };
 
     // Construct a Range widget (two-handled slider)
@@ -123,6 +124,12 @@
                 }
                 return false;
         }
+    }
+
+    // Construct a None widget (no widget)
+    function None() {
+        this.html = '';
+        this.filter = function() { return true; }
     }
 
 
