@@ -58,7 +58,7 @@
              */
 
             // Get widget type based on config options
-            var type = opts.i || opts.implicit || 'none';
+            var type = opts[i] || opts.implicit || 'none';
             type = type.toLowerCase();
             if (type == "auto") {
                 // See: https://datatables.net/reference/option/columns.type
