@@ -130,8 +130,11 @@
     function RangeWidget(dTable, data, opts) {
         opts = opts || {};
         var slider = $("<div class='range-slider'></div>");
-        this.max = data.max();
-        this.min = data.min();
+        this.max = opts.max || data.max();
+        this.min = opts.min || data.min();
+        this.prefix = opts.prefix || '';
+        this.suffix = opts.suffix || '';
+        this.pips = opts.pips || false;
         var widget = this;
 
         // Turn it into a jQuery-ui slider
@@ -146,7 +149,10 @@
                 widget.max = value[1];
                 dTable.draw();
             }
-        }).slider("float");
+        }).slider("float", {
+            prefix: this.prefix,
+            suffix: this.suffix,
+        });
 
         // get HTML from jQuery
         this.html = slider.get();
@@ -155,7 +161,7 @@
             var max = this.max;
             var min = this.min;
             if ((isNaN(min) && isNaN(max)) || (isNaN(min) && value <= max) ||
-                (min <= value && isNaN(max)) || (min <= value && value <= max))
+                (min <= value && isNaN(max)) || (min <= value && value <= max + 1))
                 {
                     return true;
                 }
