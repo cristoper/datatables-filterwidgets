@@ -10,6 +10,9 @@
      */
     var scolumnFilters = {};
     scolumnFilters.widgetArray = [];
+    scolumnFilters.defaults = {
+        implicit: "auto"
+    };
 
     /* When a Datatable initializes, check to see if it is configured for
      * columnFilters */
@@ -19,6 +22,7 @@
         }
 
         var opts = settings.oInit.columnFilters;
+        $.extend(opts, scolumnFilters.defaults);
 
         if (opts) {
             setTimeout(addColumnFilters(settings, opts), 0);
