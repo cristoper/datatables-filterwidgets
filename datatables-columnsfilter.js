@@ -12,7 +12,7 @@
     scolumnFilters.widgetArray = [];
 
     /* When a Datatable initializes, check to see if it is configured for
-     * columnHeaders */
+     * columnFilters */
     $(document).on( 'init.dt', function (e, settings, json) {
         if ( e.namespace !== 'dt' ) {
             return;
