@@ -51,14 +51,18 @@
 
             /*
              * {
-             *   0: 'Range',
-             *   3: 'Text',
+             *   0: { name: 'Range' },
+             *   2: 'date',
+             *   3: { name: 'Text',
+             *        opts: { prefix: '$' }
+             *      },
              *   implicit: 'None'
              * }
              */
 
             // Get widget type based on config options
-            var type = opts[i] || opts.implicit || 'none';
+            var type = (opts[i] && opts[i].name) || (typeof opts[i] === "string" && opts[i])
+                || opts.implicit || 'none';
             type = type.toLowerCase();
             if (type == "auto") {
                 // See: https://datatables.net/reference/option/columns.type
@@ -75,7 +79,7 @@
             }
 
             // Add the widgets
-            var widget = new widgetConstructors[type](dTable, data);
+            var widget = new widgetConstructors[type](dTable, data, opts[i] && opts[i].opts);
             controlCell.html(widget.html);
             controlRow.append(controlCell);
             scolumnFilters.widgetArray.push(widget);
@@ -123,7 +127,8 @@
     };
 
     // Construct a Range widget (two-handled slider)
-    function RangeWidget(dTable, data) {
+    function RangeWidget(dTable, data, opts) {
+        opts = opts || {};
         var slider = $("<div class='range-slider'></div>");
         this.max = data.max();
         this.min = data.min();
