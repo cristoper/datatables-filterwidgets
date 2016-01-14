@@ -25,7 +25,7 @@
         $.extend(opts, scolumnFilters.defaults);
 
         if (opts) {
-            setTimeout(addColumnFilters(settings, opts), 0);
+            addColumnFilters(settings, opts);
         }
     });
 
