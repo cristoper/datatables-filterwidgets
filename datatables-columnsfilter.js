@@ -62,7 +62,7 @@
             type = type.toLowerCase();
             if (type == "auto") {
                 // See: https://datatables.net/reference/option/columns.type
-                switch (coltype) {
+                switch (colType) {
                     case "date":
                         type = "date";
                     break;
@@ -116,12 +116,14 @@
      * TODO: need to add a DataTables API call to extend this with more widget types.
      * */
     var widgetConstructors = {
-        range: Range,
-        none: None
+        range: RangeWidget,
+        none: NoneWidget,
+        date: DateWidget,
+        text: TextWidget
     };
 
     // Construct a Range widget (two-handled slider)
-    function Range(dTable, data) {
+    function RangeWidget(dTable, data) {
         var slider = $("<div class='range-slider'></div>");
         this.max = data.max();
         this.min = data.min();
@@ -157,12 +159,22 @@
     }
 
     // Construct a None widget (no widget)
-    function None() {
+    function NoneWidget() {
         this.html = '';
         this.filter = function() { return true; }
     }
 
+    // Construct a Date widget
+    function DateWidget() {
+        this.html = 'Date';
+        this.filter = function() { return true; }
+    }
 
+    // Construct a Text widget
+    function TextWidget() {
+        this.html = 'Text';
+        this.filter = function() { return true; }
+    }
     /***
      * DataTable API Plugins
      */
