@@ -106,7 +106,7 @@
 
                 for (var i=0; i < widgetArray.length; i++) {
                     var widget = widgetArray[i];
-                    if (!widget.filter(searchData[i])) {
+                    if (widget.filter && !widget.filter(searchData[i])) {
                         // If ANY filter returns false, then don't show the row
                         return false;
                     }
@@ -268,12 +268,6 @@
         this.filter = function() { return true; }
     }
 
-    // Construct a Date widget
-    function DateWidget() {
-        this.html = 'Date';
-        this.filter = function() { return true; }
-    }
-
     // Construct a Text widget
     function TextWidget(dTable, colIndex, opts) {
         var input = $("<input type='search'></input>");
@@ -286,8 +280,9 @@
         });
         this.html = input;
 
-        // Simply return true since we are using the builtin column().search()
-        // for filtering
+    // Construct a Date widget
+    function DateWidget() {
+        this.html = 'Date';
         this.filter = function() { return true; }
     }
 
