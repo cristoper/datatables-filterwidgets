@@ -162,6 +162,13 @@
 
         // get HTML from jQuery
         this.html = slider.get();
+
+        /** Called by custom filter whenever DataTable is drawn
+         *
+         * @param {Number} value - the value in the table cell. We test this
+         * value against the slider's set range.
+         * @returns {Bool} false if the value is outside of range, true if it is within the range.
+         */
         this.filter = function(value) {
             value = parseFloat(value);
             var max = this.max;
