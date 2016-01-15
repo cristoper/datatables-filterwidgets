@@ -182,7 +182,7 @@
                 return true;
             }
 
-            return (min <= value && value <= max + 1);
+            return (min <= value && value <= max);
         }
 
         /*** Helper Functions (used by above code) ***/
