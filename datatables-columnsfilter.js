@@ -22,6 +22,7 @@
         }
 
         var opts = settings.oInit.columnFilters;
+        if (opts === true) { opts = {}; }
         $.extend(opts, scolumnFilters.defaults);
 
         if (opts) {
