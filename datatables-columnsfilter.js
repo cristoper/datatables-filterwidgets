@@ -131,9 +131,11 @@
     function RangeWidget(dTable, data, opts) {
         opts = opts || {};
         var slider = $("<div class='range-slider'></div>");
-        this.max = opts.max || data.max();
-        this.min = opts.min || data.min();
         this.numSteps = opts.numSteps || 10;
+        this.min = opts.min || data.min();
+        // The maximum calculation depends on numSteps and min:
+        this.max = opts.max || calcEvenMax(data.max(), this.min, this.numSteps);
+        // The step size depends on the (even) max, min and numSteps
         this.step = opts.step || calcStepSize(this.max, this.min, this.numSteps);
         this.defaults = opts.defaults || [this.min, this.max];
         this.prefix = opts.prefix || '';
@@ -167,7 +169,8 @@
          *
          * @param {Number} value - the value in the table cell. We test this
          * value against the slider's set range.
-         * @returns {Bool} false if the value is outside of range, true if it is within the range.
+         * @returns {Bool} false if the value is outside of range, true if it
+         * is within the range.
          */
         this.filter = function(value) {
             value = parseFloat(value);
@@ -191,6 +194,18 @@
          */
         function calcStepSize(max, min, numSteps) {
             return Math.floor((max-min)/10);
+        }
+
+        /** Calculate a new maximum so that (max-min) is evenly divided by
+         * this.steps
+         *
+         * @param {Number} max - the original maximum value
+         * @returns {Number} the new (larger) maximum value
+         */
+        function calcEvenMax(max, min, numSteps) {
+            var modulus = (max-min) % numSteps;
+            var diff = numSteps - modulus;
+            return max + diff;
         }
 
         /** Make numbers short and readable for printing on slider float
