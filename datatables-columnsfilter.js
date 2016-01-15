@@ -97,22 +97,22 @@
 
         // custom search for filtering via our widgets
         $.fn.dataTable.ext.search.push(
-            function( settings, searchData, index, rowData, counter ) {
-            // TODO: cache this so we don't recreate the API on every row!
-            var api = new $.fn.dataTable.Api(settings);
-            var header = $(api.table().header());
-            var widgetArray = scolumnFilters.widgetArray;
+            function(settings, searchData, index, rowData, counter) {
+                // TODO: cache this so we don't recreate the API on every row!
+                var api = new $.fn.dataTable.Api(settings);
+                var header = $(api.table().header());
+                var widgetArray = scolumnFilters.widgetArray;
 
-            if (!widgetArray) { return true; }
+                if (!widgetArray) { return true; }
 
-            for (var i=0; i < widgetArray.length; i++) {
-                var widget = widgetArray[i];
-                if (!widget.filter(searchData[i])) {
-                    // If ANY filter returns false, then don't show the row
-                    return false;
+                for (var i=0; i < widgetArray.length; i++) {
+                    var widget = widgetArray[i];
+                    if (!widget.filter(searchData[i])) {
+                        // If ANY filter returns false, then don't show the row
+                        return false;
+                    }
                 }
-            }
-            return true
+                return true
         });
     }
 
@@ -176,12 +176,13 @@
             value = parseFloat(value);
             var max = this.max;
             var min = this.min;
-            if ((isNaN(min) && isNaN(max)) || (isNaN(min) && value <= max) ||
-                (min <= value && isNaN(max)) || (min <= value && value <= max + 1))
-                {
-                    return true;
-                }
-                return false;
+
+            // Range filters are not concerned with NaNs, so let them pass
+            if (isNaN(value)) {
+                return true;
+            }
+
+            return (min <= value && value <= max + 1);
         }
 
         /*** Helper Functions (used by above code) ***/
@@ -209,7 +210,7 @@
         }
 
         /** Make numbers short and readable for printing on slider float
-         */
+        */
         function formatLabel(val) {
             return this.prefix + shortenLargeNumber(val,0) + this.suffix;
         }
@@ -286,14 +287,16 @@
         /* NOTE: some JavaScript implementations limit the number of arguments
          * to something like 65,536 -- but if a table is larger than that, it
          * should probably be using server-side processing anyway */
-        return Math.max.apply(null, this);
+        var numArray = this.filter(function(element) { return !isNaN(element) });
+        return Math.max.apply(null, numArray);
     });
 
     $.fn.dataTable.Api.register('min()', function() {
         /* NOTE: some JavaScript implementations limit the number of arguments
          * to something like 65,536 -- but if a table is larger than that, it
          * should probably be using server-side processing anyway */
-        return Math.min.apply(null, this);
+        var numArray = this.filter(function(element) { return !isNaN(element) });
+        return Math.min.apply(null, numArray);
     });
 
 })(jQuery, document, window);
