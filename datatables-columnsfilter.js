@@ -133,6 +133,9 @@
         var slider = $("<div class='range-slider'></div>");
         this.max = opts.max || data.max();
         this.min = opts.min || data.min();
+        this.numSteps = opts.numSteps || 10;
+        this.step = opts.step || calcStepSize(this.max, this.min, this.numSteps);
+        this.defaults = opts.defaults || [this.min, this.max];
         this.prefix = opts.prefix || '';
         this.suffix = opts.suffix || '';
         this.pips = opts.pips || false;
@@ -142,6 +145,7 @@
         slider.slider({
             min: this.min,
             max: this.max,
+            step: this.step,
             values: [this.min, this.max],
             range: true,
             slide: function(e, ui) {
@@ -168,6 +172,19 @@
                 }
                 return false;
         }
+
+        /*** Helper Functions (used by above code) ***/
+
+        /** calculate a reasonable step size
+         *
+         * @param {Number} max - the maximum of the dataset
+         * @param {Number} min - the minimum of the dataset
+         * @returns {Number} The stepsize to use
+         */
+        function calcStepSize(max, min, numSteps) {
+            return Math.floor((max-min)/10);
+        }
+
     }
 
     // Construct a None widget (no widget)
