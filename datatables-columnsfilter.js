@@ -43,7 +43,6 @@
             var i = this.index();
             var isVisible = this.visible();
             var colType = settings.aoColumns[i].sType;
-            var data = this.data();
             var controlCell = $('<td></td>'); // jQuery
             if (!isVisible) {
                 controlCell.hide();
@@ -80,7 +79,7 @@
             }
 
             // Add the widgets
-            var widget = new widgetConstructors[type](dTable, data, opts[i] && opts[i].opts);
+            var widget = new widgetConstructors[type](dTable, i, opts[i] && opts[i].opts);
             controlCell.html(widget.html);
             controlRow.append(controlCell);
             scolumnFilters.widgetArray.push(widget);
@@ -116,7 +115,7 @@
         });
     }
 
-    /* Every widget constructor is passed a reference to the DataTable API object and the column data, and it must return an object with two properties: 'html' the html element to insert in the control row, and 'filter' a function which is passed a cell value and must return true (show row) or false (hide row)
+    /* Every widget constructor is passed a reference to the DataTable API object, the column index, and any options passed during configuration, and it must return an object with two properties: 'html' the html element to insert in the control row, and 'filter' a function which is passed a cell value and must return true (show row) or false (hide row)
      * 
      * TODO: need to add a DataTables API call to extend this with more widget types.
      * */
@@ -128,8 +127,9 @@
     };
 
     // Construct a Range widget (two-handled slider)
-    function RangeWidget(dTable, data, opts) {
+    function RangeWidget(dTable, colIndex, opts) {
         opts = opts || {};
+        var data = dTable.column(colIndex).data();
         var slider = $("<div class='range-slider'></div>");
         this.numSteps = opts.numSteps || 10;
         this.min = opts.min || data.min();
