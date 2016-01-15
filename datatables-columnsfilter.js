@@ -275,10 +275,23 @@
     }
 
     // Construct a Text widget
-    function TextWidget() {
-        this.html = 'Text';
+    function TextWidget(dTable, colIndex, opts) {
+        var input = $("<input type='search'></input>");
+
+        // Note that the oninput event is supported by IE9+
+        // (but is buggy in IE9 (http://help.dottoro.com/ljhxklln.php)
+        input.on("input", function() {
+            dTable.column(colIndex).search(this.value).draw()
+            $(this).focus();
+        });
+        this.html = input;
+
+        // Simply return true since we are using the builtin column().search()
+        // for filtering
         this.filter = function() { return true; }
     }
+
+
     /***
      * DataTable API Plugins
      */
