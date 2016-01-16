@@ -51,9 +51,9 @@
 
             /*
              * {
-             *   0: { name: 'Range' },
+             *   0: { type: 'Range' },
              *   2: 'date',
-             *   3: { name: 'Text',
+             *   3: { type: 'Text',
              *        opts: { prefix: '$' }
              *      },
              *   implicit: 'None'
@@ -61,7 +61,7 @@
              */
 
             // Get widget type based on config options
-            var type = (opts[i] && opts[i].name) || (typeof opts[i] === "string" && opts[i])
+            var type = (opts[i] && opts[i].type) || (typeof opts[i] === "string" && opts[i])
                 || opts.implicit || 'none';
             type = type.toLowerCase();
             if (type == "auto") {
