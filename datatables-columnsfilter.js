@@ -123,7 +123,8 @@
         range: RangeWidget,
         none: NoneWidget,
         date: DateWidget,
-        text: TextWidget
+        text: TextWidget,
+        select: SelectWidget
     };
 
     // Construct a Range widget (two-handled slider)
@@ -279,6 +280,45 @@
             $(this).focus();
         });
         this.html = input;
+    }
+
+    /**
+     *
+     * opts.options - an array of options. If opts is not given, then a
+     * list will be built automatically from the unique strings in the column
+     * data.
+     */
+    function SelectWidget(dTable, colIndex, opts) {
+        opts = opts || {};
+        var column = dTable.column(colIndex);
+        var data = column.data();
+        var optsArray = opts.options || data.unique();
+        var select = $("<select></select>");
+        select.append("<option>All</option>");
+
+        // build the list
+        $.each(optsArray.sort(), function(index, option) {
+            select.append("<option>"+option+"</option>");
+        });
+
+        this.html = select;
+
+        // Update the table when a selection is made
+        select.change(function() { dTable.draw(); });
+
+        /* Filter out any rows which don't match the selection exactly, apart
+         * from case.
+        */
+        this.filter = function(value) {
+            var selection = select.val().toLowerCase();
+            value = value.toLowerCase();
+            if (selection === "all") {
+                return true;
+            }
+            return (selection == value);
+        }
+
+    }
 
     // Construct a Date widget
     function DateWidget() {
