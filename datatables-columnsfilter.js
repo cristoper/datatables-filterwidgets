@@ -4,6 +4,8 @@
 
 ;(function ($, document, window, exports) {
 
+    var colfil_columns;
+
     /** Name space to store state
      * TODO: Add these to DataTables namespace like a proper extension
      * @namespace
@@ -13,6 +15,11 @@
     scolumnFilters.defaults = {
         implicit: "auto"
     };
+
+    // Catch the 'resposnive-resize' events which fire before the 'init.dt' event
+    $(document).on('responsive-resize.dt', function(e, datatable, columns) {
+        colfil_columns = columns;
+    });
 
     /* When a Datatable initializes, check to see if it is configured for
      * columnFilters */
@@ -85,6 +92,11 @@
             scolumnFilters.widgetArray.push(widget);
         });
 
+        // Hide any columns already hidden by the Responsive extension
+        if (colfil_columns.length) {
+            show_hide_columns(colfil_columns);
+        }
+
         // Add the control row to the table
         header.append(controlRow);
 
@@ -92,6 +104,12 @@
         dTable.on('column-visibility.dt', function(e, settings, column, state) {
             var col = $(controlRow.children()[column]); // jQuery
             state ? col.show() : col.hide();
+        });
+
+        // Keep in sync with visibility controlled by Responsive extension
+        $(document).off('responsive-resize.dt');
+        dTable.on('responsive-resize.dt', function(e, datatable, columns) {
+            show_hide_columns(columns);
         });
 
         // custom search for filtering via our widgets
@@ -113,6 +131,17 @@
                 }
                 return true
         });
+
+        /** Show/hide control columns based on an array of booleans (true=show; false=hide)
+         *
+         * @param {Array} columns
+         */
+        function show_hide_columns(columns) {
+            columns.forEach(function(is_visible, index) {
+                var col = $(controlRow.children()[index]);
+                is_visible ? col.show() : col.hide();
+            });
+        }
     }
 
     /* Every widget constructor is passed a reference to the DataTable API object, the column index, and any options passed during configuration, and it must return an object with two properties: 'html' the html element to insert in the control row, and 'filter' a function which is passed a cell value and must return true (show row) or false (hide row)
