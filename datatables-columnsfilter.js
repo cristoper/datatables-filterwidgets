@@ -70,26 +70,26 @@
             // Get widget type based on config options
             var type = (opts[i] && opts[i].type) || (typeof opts[i] === "string" && opts[i])
                 || opts.implicit || 'none';
-            type = type.toLowerCase();
-            if (type == "auto") {
-                // See: https://datatables.net/reference/option/columns.type
-                switch (colType) {
-                    case "date":
-                        type = "date";
-                    break;
-                    case "num":
-                        type = "range";
-                    break;
-                    default:
-                        type = "text";
+                type = type.toLowerCase();
+                if (type == "auto") {
+                    // See: https://datatables.net/reference/option/columns.type
+                    switch (colType) {
+                        case "date":
+                            type = "date";
+                        break;
+                        case "num":
+                            type = "range";
+                        break;
+                        default:
+                            type = "text";
+                    }
                 }
-            }
 
-            // Add the widgets
-            var widget = new widgetConstructors[type](dTable, i, opts[i] && opts[i].opts);
-            controlCell.html(widget.html);
-            controlRow.append(controlCell);
-            scolumnFilters.widgetArray.push(widget);
+                // Add the widgets
+                var widget = new widgetConstructors[type](dTable, i, opts[i] && opts[i].opts);
+                controlCell.html(widget.html);
+                controlRow.append(controlCell);
+                scolumnFilters.widgetArray.push(widget);
         });
 
         // Hide any columns already hidden by the Responsive extension
@@ -115,21 +115,21 @@
         // custom search for filtering via our widgets
         $.fn.dataTable.ext.search.push(
             function(settings, searchData, index, rowData, counter) {
-                // TODO: cache this so we don't recreate the API on every row!
-                var api = new $.fn.dataTable.Api(settings);
-                var header = $(api.table().header());
-                var widgetArray = scolumnFilters.widgetArray;
+            // TODO: cache this so we don't recreate the API on every row!
+            var api = new $.fn.dataTable.Api(settings);
+            var header = $(api.table().header());
+            var widgetArray = scolumnFilters.widgetArray;
 
-                if (!widgetArray) { return true; }
+            if (!widgetArray) { return true; }
 
-                for (var i=0; i < widgetArray.length; i++) {
-                    var widget = widgetArray[i];
-                    if (widget.filter && !widget.filter(searchData[i])) {
-                        // If ANY filter returns false, then don't show the row
-                        return false;
-                    }
+            for (var i=0; i < widgetArray.length; i++) {
+                var widget = widgetArray[i];
+                if (widget.filter && !widget.filter(searchData[i])) {
+                    // If ANY filter returns false, then don't show the row
+                    return false;
                 }
-                return true
+            }
+            return true
         });
 
         /** Show/hide control columns based on an array of booleans (true=show; false=hide)
@@ -337,7 +337,7 @@
 
         /* Filter out any rows which don't match the selection exactly, apart
          * from case.
-        */
+         */
         this.filter = function(value) {
             var selection = select.val().toLowerCase();
             value = value.toLowerCase();
