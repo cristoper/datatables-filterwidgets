@@ -4,22 +4,9 @@
 
 ;(function ($, document, window, exports) {
 
-    var colfil_columns;
-
-    /** Name space to store state
-     * TODO: Add these to DataTables namespace like a proper extension
-     * @namespace
-     */
-    var scolumnFilters = {};
-    scolumnFilters.widgetArray = [];
-    scolumnFilters.defaults = {
+    var defaults = {
         implicit: "auto"
     };
-
-    // Catch the 'resposnive-resize' events which fire before the 'init.dt' event
-    $(document).on('responsive-resize.dt', function(e, datatable, columns) {
-        colfil_columns = columns;
-    });
 
     /* When a Datatable initializes, check to see if it is configured for
      * columnFilters */
@@ -30,20 +17,45 @@
 
         var opts = settings.oInit.columnFilters;
         if (opts === true) { opts = {}; }
-        $.extend(opts, scolumnFilters.defaults);
+        $.extend(opts, defaults);
 
         if (opts) {
             addColumnFilters(settings, opts);
         }
     });
 
+    // Catch the 'responsive-resize' events which fires before the 'init.dt' event
+    $(document).on('responsive-resize.dt', function(e, datatable, columns) {
+        var table = datatable.table().node();
+        if (!table.colfil_state) {
+            initialize_table_state(table);
+        }
+        table.colfil_state.resp_columns = columns;
+    });
+
+    /**
+     *
+     * @param {HTMLnode} tableNode - the table being initialized
+     */
+    function initialize_table_state(tableNode) {
+        // Store state in DOM object
+        tableNode.colfil_state = {};
+        tableNode.colfil_state.widgetArray = [];
+        tableNode.resp_columns = [];
+        tableNode.cached_api = {};
+    }
 
     function addColumnFilters(settings, opts) {
 
         var dTable = $.fn.dataTable.Api(settings);
+
+        // Store state in DOM object
+        var table = dTable.table().node();
+        if (!table.colfil_state) {
+            initialize_table_state(table);
+        }
         var header = $(dTable.table().header()); // jQuery
         var controlRow = $('<tr id="columnFiltersRow"></tr>');
-
 
         dTable.columns().every(function() {
             // create a control column for every table column
@@ -89,12 +101,12 @@
                 var widget = new widgetConstructors[type](dTable, i, opts[i] && opts[i].opts);
                 controlCell.html(widget.html);
                 controlRow.append(controlCell);
-                scolumnFilters.widgetArray.push(widget);
+                table.colfil_state.widgetArray.push(widget);
         });
 
         // Hide any columns already hidden by the Responsive extension
-        if (colfil_columns.length) {
-            show_hide_columns(colfil_columns);
+        if (table.colfil_state.resp_columns.length) {
+            show_hide_columns(table.colfil_state.resp_columns);
         }
 
         // Add the control row to the table
@@ -115,33 +127,43 @@
         // custom search for filtering via our widgets
         $.fn.dataTable.ext.search.push(
             function(settings, searchData, index, rowData, counter) {
-            // TODO: cache this so we don't recreate the API on every row!
-            var api = new $.fn.dataTable.Api(settings);
-            var header = $(api.table().header());
-            var widgetArray = scolumnFilters.widgetArray;
-
-            if (!widgetArray) { return true; }
-
-            for (var i=0; i < widgetArray.length; i++) {
-                var widget = widgetArray[i];
-                if (widget.filter && !widget.filter(searchData[i])) {
-                    // If ANY filter returns false, then don't show the row
-                    return false;
+                if (counter == 0) {
+                    // cache an instance of the API so we don't re-create it on
+                    // every row (slow)
+                    settings.colfil_dTable = new $.fn.dataTable.Api(settings);
+                    if (!settings.nTable) {
+                        // settings is a private API, so nTable might not exist
+                        // in future versions
+                        settings.nTable = settings.colfil_dTable.table().node();
+                    }
                 }
-            }
-            return true
-        });
+                var api = settings.colfil_dTable;
+                var table = api.table().node();
+                var header = $(api.table().header());
+                var widgetArray = table.colfil_state.widgetArray;
 
-        /** Show/hide control columns based on an array of booleans (true=show; false=hide)
-         *
-         * @param {Array} columns
-         */
-        function show_hide_columns(columns) {
-            columns.forEach(function(is_visible, index) {
-                var col = $(controlRow.children()[index]);
-                is_visible ? col.show() : col.hide();
+                if (!widgetArray) { return true; }
+
+                for (var i=0; i < widgetArray.length; i++) {
+                    var widget = widgetArray[i];
+                    if (widget.filter && !widget.filter(searchData[i])) {
+                        // If ANY filter returns false, then don't show the row
+                        return false;
+                    }
+                }
+                return true
             });
-        }
+
+            /** Show/hide control columns based on an array of booleans (true=show; false=hide)
+             *
+             * @param {Array} columns
+             */
+            function show_hide_columns(columns) {
+                columns.forEach(function(is_visible, index) {
+                    var col = $(controlRow.children()[index]);
+                    is_visible == true ? col.show() : col.hide();
+                });
+            }
     }
 
     /* Every widget constructor is passed a reference to the DataTable API object, the column index, and any options passed during configuration, and it must return an object with two properties: 'html' the html element to insert in the control row, and 'filter' a function which is passed a cell value and must return true (show row) or false (hide row)
