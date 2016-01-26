@@ -88,10 +88,10 @@
                     switch (colType) {
                         case "date":
                             type = "date";
-                        break;
+                            break;
                         case "num":
                             type = "range";
-                        break;
+                            break;
                         default:
                             type = "text";
                     }
@@ -165,7 +165,11 @@
             }
     }
 
-    /* Every widget constructor is passed a reference to the DataTable API object, the column index, and any options passed during configuration, and it must return an object with two properties: 'html' the html element to insert in the control row, and 'filter' a function which is passed a cell value and must return true (show row) or false (hide row)
+    /* Every widget constructor is passed a reference to the DataTable API
+     * object, the column index, and any options passed during configuration,
+     * and it must return an object with two properties: 'html' the html
+     * element to insert in the control row, and 'filter' a function which is
+     * passed a cell value and must return true (show row) or false (hide row)
      * 
      * TODO: need to add a DataTables API call to extend this with more widget types.
      * */
@@ -298,20 +302,19 @@
          */
         function shortenLargeNumber(num, digits) {
             var units = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'],
-            decimal;
+                decimal;
 
-            for(var i=units.length-1; i>=0; i--) {
+            for (var i=units.length-1; i>=0; i--) {
                 decimal = Math.pow(1000, i+1);
 
-                if(num <= -decimal || num >= decimal) {
+                if (num <= -decimal || num >= decimal) {
                     return +(num / decimal).toFixed(digits) + units[i];
                 }
             }
             return num;
         }
 
-
-    }
+    } // RangeWidget
 
     // Construct a None widget (no widget)
     function NoneWidget() {
