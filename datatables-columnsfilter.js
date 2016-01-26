@@ -127,18 +127,17 @@
         // custom search for filtering via our widgets
         $.fn.dataTable.ext.search.push(
             function(settings, searchData, index, rowData, counter) {
-                if (counter == 0) {
-                    // cache an instance of the API so we don't re-create it on
-                    // every row (slow)
-                    settings.colfil_dTable = new $.fn.dataTable.Api(settings);
-                    if (!settings.nTable) {
-                        // settings is a private API, so nTable might not exist
-                        // in future versions
-                        settings.nTable = settings.colfil_dTable.table().node();
-                    }
+                if (!settings.nTable) {
+                    // settings is a private API, so nTable might not exist
+                    // in future versions
+                    settings.nTable = new $.fn.dataTable.Api(settings).table().node();
                 }
-                var api = settings.colfil_dTable;
-                var table = api.table().node();
+                var table = settings.nTable;
+
+                if (counter == 0) {
+                    table.dTable = new $.fn.dataTable.Api(settings);
+                }
+                var api = table.dTable;
                 var header = $(api.table().header());
                 var widgetArray = table.colfil_state.widgetArray;
 
