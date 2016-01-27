@@ -214,8 +214,8 @@
                 dTable.draw();
             }
         }).slider("float", {
-            prefix: this.prefix,
-            suffix: this.suffix,
+            prefix: widget.prefix,
+            suffix: widget.suffix,
             formatLabel: formatLabel
         });
 
