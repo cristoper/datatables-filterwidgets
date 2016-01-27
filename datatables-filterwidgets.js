@@ -2,7 +2,7 @@
 // DataTables >=1.10.x (https://datatables.net/)
 // jQuery-ui-Slider-Pips (https://github.com/simeydotme/jQuery-ui-Slider-Pips/)
 
-;(function ($, document, window, exports) {
+;(function ($, document, window) {
 
     var defaults = {
         implicit: "auto"
