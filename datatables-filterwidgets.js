@@ -338,6 +338,82 @@
         this.html = input;
     }
 
+    // Construct a Date widget
+    function DateWidget(dTable, colIndex, opts) {
+        var data = dTable.column(colIndex).data().sort();
+        var min_date = new Date(data[0]);
+        var max_date = new Date(data[data.length-1]);
+        var from_input = $("<input type='text' name='from' id='from_date"+colIndex+"'></input>");
+        var to_input = $("<input type='text' name='to' id='to_date"+colIndex+"'></input>");
+
+        this.set_min = min_date;
+        this.set_max = max_date;
+
+        var widget = this;
+
+        from_input.datepicker({
+            defaultDate: min_date,
+            minDate: min_date,
+            changeMonth: true,
+            changeYear: true,
+            onClose: function( selectedDate ) {
+                to_input.datepicker( "option", "minDate", selectedDate );
+            },
+            onSelect: function(date, picker) {
+                widget.set_min = from_input.datepicker("getDate");
+                dTable.draw();
+            }
+        });
+        from_input.val(min_date.toLocaleDateString());
+        from_input.css("width", "5.5em");
+
+        to_input.datepicker({
+            defaultDate: max_date,
+            maxDate: max_date,
+            changeMonth: true,
+            changeYear: true,
+            onClose: function( selectedDate ) {
+                from_input.datepicker( "option", "maxDate", selectedDate );
+            },
+            onSelect: function(date, picker) {
+                widget.set_max = to_input.datepicker("getDate");
+                dTable.draw();
+            }
+        });
+        to_input.val(max_date.toLocaleDateString());
+        to_input.css("width", "5.5em");
+
+        var html_div = $("<div class='datepicker'></div>");
+        html_div.append($("<label for='from_date"+colIndex+"'>From: </label>"));
+        html_div.append(from_input);
+        html_div.append("<br />");
+        html_div.append($("<label for='to_date"+colIndex+"'>To: </label>"));
+        html_div.append(to_input);
+
+        this.html = html_div;
+
+        /** Called by custom filter whenever DataTable is drawn
+         *
+         * @param {Number} value - the value in the table cell. We test this
+         * value against the slider's set range.
+         * @returns {Bool} false if the value is outside of range, true if it
+         * is within the range.
+         */
+        this.filter = function(value) {
+            value = Date.parse(value);
+            var max = this.set_max.setDate(this.set_max.getDate()+1);
+            var min = this.set_min;
+
+            // If it's not a date value, let it through
+            // are not concerned with NaNs, so let them pass
+            if (isNaN(value)) {
+                return true;
+            }
+
+            return (min <= value && value <= max);
+        }
+    }
+
     /**
      *
      * opts.options - an array of options. If opts is not given, then a
@@ -374,12 +450,6 @@
             return (selection == value);
         }
 
-    }
-
-    // Construct a Date widget
-    function DateWidget() {
-        this.html = 'Date';
-        this.filter = function() { return true; }
     }
 
 
