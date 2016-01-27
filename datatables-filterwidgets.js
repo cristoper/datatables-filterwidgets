@@ -334,6 +334,7 @@
             dTable.column(colIndex).search(this.value).draw()
             $(this).focus();
         });
+        input.css("width", "100%");
         this.html = input;
     }
 
