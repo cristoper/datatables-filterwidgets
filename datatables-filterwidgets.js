@@ -251,7 +251,7 @@
          * @returns {Number} The stepsize to use
          */
         function calcStepSize(max, min, numSteps) {
-            return Math.floor((max-min)/10);
+            return Math.floor((max-min)/numSteps);
         }
 
         /** Calculate a new maximum so that (max-min) is evenly divided by
