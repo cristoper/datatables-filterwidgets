@@ -73,7 +73,7 @@
              *   0: { type: 'Range' },
              *   2: 'date',
              *   3: { type: 'Text',
-             *        opts: { prefix: '$' }
+             *        prefix: '$'
              *      },
              *   implicit: 'None'
              * }
@@ -98,7 +98,7 @@
                 }
 
                 // Add the widgets
-                var widget = new widgetConstructors[type](dTable, i, opts[i] && opts[i].opts);
+                var widget = new widgetConstructors[type](dTable, i, opts[i]);
                 controlCell.html(widget.html);
                 controlRow.append(controlCell);
                 table.colfil_state.widgetArray.push(widget);
