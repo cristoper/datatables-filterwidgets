@@ -114,12 +114,6 @@
         // Add the control row to the table
         header.append(controlRow);
 
-        // Keep control header row in sync with sorting header row column visibility
-        dTable.on('column-visibility.dt', function(e, settings, column, state) {
-            var col = $(controlRow.children()[column]); // jQuery
-            state ? col.show() : col.hide();
-        });
-
         // Keep in sync with visibility controlled by Responsive extension
         $(document).off('responsive-resize.dt');
         dTable.on('responsive-resize.dt', function(e, datatable, columns) {
