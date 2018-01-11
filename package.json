@@ -1,0 +1,21 @@
+{
+  "name": "datatables-filterwidgets",
+  "version": "1.0.0",
+  "main": "datatables-filterwidgets.js",
+  "homepage": "https://github.com/cristoper/datatables-filterwidgets",
+  "authors": [
+    "cristoper <chris@mretc.net>"
+  ],
+  "description": "A DataTables extension to easily add per-column filter widgets (search box, range slider, date picker, selection menu) to a table.",
+  "keywords": [
+    "jQuery",
+    "DataTables",
+    "datatables.net",
+    "filter",
+    "table"
+  ],
+  "license": "WTFPL",
+  "dependencies": {
+    "jquery-ui-slider-pips": "^1.11.4"
+  }
+}
