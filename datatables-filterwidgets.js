@@ -34,7 +34,6 @@
     });
 
     /**
-     *
      * @param {HTMLnode} tableNode - the table being initialized
      */
     function initialize_table_state(tableNode) {
@@ -45,6 +44,29 @@
         tableNode.cached_api = {};
     }
 
+    /** The main function of our extension; it sets everything up and adds a
+     * row to the table header containing all of the filter widgets.
+     *
+     * @param {Object} settings - the DataTables settings object (passed, for
+     * example, from an event) which can be used to create an instance of a
+     * DataTables API object for the table of interest. See:
+     * https://datatables.net/reference/type/DataTables.Settings
+     *
+     * @param {Object} opts - the options passed to our extension in the
+     * DataTable() function.
+     *
+     * Example opts object:
+     *
+     * {
+     *   0: { type: 'Range' },
+     *   2: 'date',
+     *   3: { type: 'Text',
+     *        prefix: '$'
+     *      },
+     *   implicit: 'None'
+     * }
+     *
+     */
     function addColumnFilters(settings, opts) {
 
         var dTable = $.fn.dataTable.Api(settings);
@@ -66,18 +88,6 @@
             if (!isVisible) {
                 controlCell.hide();
             }
-
-
-            /*
-             * {
-             *   0: { type: 'Range' },
-             *   2: 'date',
-             *   3: { type: 'Text',
-             *        prefix: '$'
-             *      },
-             *   implicit: 'None'
-             * }
-             */
 
             // Get widget type based on config options
             var type = (opts[i] && opts[i].type) || (typeof opts[i] === "string" && opts[i])
@@ -149,11 +159,16 @@
                 return true
             });
 
-            /** Show/hide control columns based on an array of booleans (true=show; false=hide)
+            /** Show/hide control columns based on Responsive extension
+             * We must loop only over visible columns, because the Responsive
+             * extension has no knowledge of hidden columns
              *
-             * @param {Array} columns
+             * @param {Array} columns - true=show; false=hide
              */
             function show_hide_columns(columns) {
+                var visibleCols = dTable.columns().visible().filter(function(val) {
+                    return val;
+                });
                 columns.forEach(function(is_visible, index) {
                     var col = $(controlRow.children()[index]);
                     is_visible == true ? col.show() : col.hide();
@@ -300,14 +315,14 @@
             var units = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'],
                 decimal;
 
-            for (var i=units.length-1; i>=0; i--) {
-                decimal = Math.pow(1000, i+1);
+                for (var i=units.length-1; i>=0; i--) {
+                    decimal = Math.pow(1000, i+1);
 
-                if (num <= -decimal || num >= decimal) {
-                    return +(num / decimal).toFixed(digits) + units[i];
+                    if (num <= -decimal || num >= decimal) {
+                        return +(num / decimal).toFixed(digits) + units[i];
+                    }
                 }
-            }
-            return num;
+                return num;
         }
 
     } // RangeWidget
