@@ -124,6 +124,20 @@
         // Add the control row to the table
         header.append(controlRow);
 
+        // Keep in sync with visibility of columns
+        // (for example, as set by Buttons extension)
+        dTable.on('column-visibility.dt', function ( e, settings, column, state ) {
+            var col = $(controlRow.children()[column]);
+            state == true ? col.show() : col.hide();
+
+            // Workaround for Responsive extension issue with multiple header rows
+            // https://github.com/DataTables/Responsive/issues/71
+            if (dTable.responsive) {
+                dTable.responsive.rebuild();
+                dTable.responsive.recalc();
+            }
+        });
+
         // Keep in sync with visibility controlled by Responsive extension
         $(document).off('responsive-resize.dt');
         dTable.on('responsive-resize.dt', function(e, datatable, columns) {
