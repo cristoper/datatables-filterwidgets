@@ -117,7 +117,7 @@
         controlRow.find('td').css('overflow', 'visible');
 
         // Hide any columns already hidden by the Responsive extension
-        if (table.colfil_state.resp_columns.length) {
+        if (table.colfil_state.resp_columns) {
             show_hide_columns(table.colfil_state.resp_columns);
         }
 
