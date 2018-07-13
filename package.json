@@ -16,6 +16,6 @@
   ],
   "license": "WTFPL",
   "dependencies": {
-    "jquery-ui-slider-pips": "^1.11.4"
+    "jquery-ui-slider-pips": "git+https://github.com/simeydotme/jQuery-ui-Slider-Pips.git#v1.11.4"
   }
 }

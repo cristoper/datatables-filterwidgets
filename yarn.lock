@@ -347,9 +347,9 @@ isarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
 
-jquery-ui-slider-pips@^1.11.4:
+"jquery-ui-slider-pips@git+https://github.com/simeydotme/jQuery-ui-Slider-Pips.git#v1.11.4":
   version "1.11.4"
-  resolved "https://registry.yarnpkg.com/jquery-ui-slider-pips/-/jquery-ui-slider-pips-1.11.4.tgz#887ef7e10f32bc22a75e0fd355f0636aaf27cc84"
+  resolved "git+https://github.com/simeydotme/jQuery-ui-Slider-Pips.git#371b31caf991070db89cda0a17dcc30410122ea2"
   dependencies:
     fs "0.0.2"
     gulp-bump "^1.0.0"
